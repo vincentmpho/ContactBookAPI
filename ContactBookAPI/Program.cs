@@ -23,6 +23,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//inject Cors to be able to connect with the FontEnd
+app.UseCors(policy =>
+policy.AllowAnyHeader().
+AllowAnyMethod().
+AllowAnyOrigin());
+
 app.UseAuthorization();
 
 app.MapControllers();
