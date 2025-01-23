@@ -11,7 +11,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ContactDbContext>(options =>
-options.UseInMemoryDatabase("ContactDb"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ContactDb")));
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
