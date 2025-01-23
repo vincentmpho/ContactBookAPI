@@ -18,32 +18,44 @@ namespace ContactBookAPI.Controllers
         }
 
         [HttpGet]
-         
-        public async Task <IActionResult> GetAllContacts()
+        public async Task<IActionResult> GetAllContacts()
         {
-           var contacts = await _context.Contacts.ToListAsync();
-
-            return Ok(contacts);
+            try
+            {
+                var contacts = await _context.Contacts.ToListAsync();
+               
+                return StatusCode(StatusCodes.Status200OK, contacts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPost]
-
-        public async Task <IActionResult> AddContact(AddContactRequestDTO request)
+        public async Task<IActionResult> AddContact(AddContactRequestDTO request)
         {
-            //Map the request into a domain model of contact
-            var domainModelContact = new Contact
+            try
             {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                Email = request.Email,
-                Phone = request.Phone,
-                Favorite = request.Favorite,
-            };
+                // Map the request into a domain model of contact
+                var domainModelContact = new Contact
+                {
+                    Id = Guid.NewGuid(),
+                    Name = request.Name,
+                    Email = request.Email,
+                    Phone = request.Phone,
+                    Favorite = request.Favorite,
+                };
 
-           _context.Contacts.Add(domainModelContact);
-           await _context.SaveChangesAsync();
-            return Ok(domainModelContact);
+                _context.Contacts.Add(domainModelContact);
+                await _context.SaveChangesAsync();
 
+                return StatusCode(StatusCodes.Status200OK, domainModelContact);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }
