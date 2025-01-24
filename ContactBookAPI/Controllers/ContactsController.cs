@@ -62,16 +62,26 @@ namespace ContactBookAPI.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> DeleteContact(Guid id)
         {
-           var contact = await _context.Contacts.FindAsync(id);
-
-            if ( contact is not null)
+            try
             {
-                _context.Contacts.Remove(contact);
-                await _context.SaveChangesAsync();
+                var contact = await _context.Contacts.FindAsync(id);
+
+                if (contact is not null)
+                {
+                    _context.Contacts.Remove(contact);
+                    await _context.SaveChangesAsync();
+                    return StatusCode(StatusCodes.Status200OK, new { message = $"Contact with ID {id} deleted successfully." });
+                }
+                else
+                {
+                    return NotFound(new { message = $"Contact with ID {id} not found." });
+                }
             }
-
-            return StatusCode(StatusCodes.Status200OK, new { message = $"Contact with ID {id} deleted successfully." });
-
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while deleting the contact.", error = ex.Message });
+            }
         }
+
     }
 }
